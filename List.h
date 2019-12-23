@@ -4,9 +4,11 @@
 
 #ifndef OP_PROJECT2_LIST_H
 #define OP_PROJECT2_LIST_H
-
+#pragma once
 #include "Elem.h"
 #include "String.h"
+#include "Pair.h"
+
 template <typename T>
 class List {
 public:
@@ -14,6 +16,7 @@ public:
     void addElem(T &);
     Elem<T>* getRoot();
     Elem<T>* getTail();
+    int getSize();
     Elem<T>* search(List<T> & list, T& item) {
         Elem<T> * curr = list.root_;
         while (curr != nullptr) {
@@ -27,6 +30,7 @@ public:
         }
         return curr;
     }
+
 private:
     Elem<T>* root_;
     Elem<T>* tail_;
@@ -43,7 +47,7 @@ void List<T>::addElem(T & elem) {
     } else {
         Elem<T> * result = search(*this, elem);
         if (result == nullptr) {
-            tail_->getNext() = new Elem<T>(root_, nullptr, elem);
+            tail_->getNext() = new Elem<T>(nullptr, tail_, elem);
             tail_ = tail_->getNext();
             size_++;
         } else if (result->getValue() == elem) {
@@ -53,9 +57,9 @@ void List<T>::addElem(T & elem) {
             root_ = root_->getPrev();
             size_++;
         } else{
-            Elem<T> * tmp = new Elem<T>(result->getPrev(), result->getNext(), elem);
+            Elem<T> * tmp = new Elem<T>(result, result->getPrev(), elem);
             result->getPrev()->getNext() = tmp;
-            result->getNext()->getPrev() = tmp;
+            result->getPrev() = tmp;
             size_++;
         }
     }
@@ -77,6 +81,11 @@ Elem<T> *List<T>::getRoot() {
 template<typename T>
 Elem<T> *List<T>::getTail() {
     return tail_;
+}
+
+template<typename T>
+int List<T>::getSize() {
+    return size_;
 }
 
 

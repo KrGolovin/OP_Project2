@@ -4,8 +4,9 @@
 
 #ifndef OP_PROJECT2_ELEM_H
 #define OP_PROJECT2_ELEM_H
-
+#pragma once
 #include "String.h"
+#include "Pair.h"
 using namespace std;
 template <typename T>
 class Elem {
@@ -16,6 +17,7 @@ public:
     Elem<T>* & getPrev();
     T& getValue();
     int& getCount();
+    bool operator>(Elem<T> & second);
 private:
     Elem<T>* next_;
     Elem<T>* prev_;
@@ -57,6 +59,11 @@ T &Elem<T>::getValue() {
 template<typename T>
 int &Elem<T>::getCount() {
     return count_;
+}
+
+template<typename T>
+bool Elem<T>::operator>(Elem<T> & second) {
+    return count_ > second.count_;
 }
 
 

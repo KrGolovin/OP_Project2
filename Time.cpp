@@ -4,6 +4,7 @@
 
 #include "Time.h"
 #include <iomanip>
+#include "functions.h"
 
 Time::Time() {
     hour_ = 0;
@@ -22,7 +23,7 @@ std::ifstream &operator>>(std::ifstream &in, Time & t) {
 }
 
 std::ofstream &operator<<(std::ofstream &out, Time & t) {
-    out << std::setw(2)<< t.hour_ << ':' << std::setw(2) << t.min_ << ':' << std::setw(2) << t.sec_;
+    out << t.hour_ << ':' << std::setw(2) << t.min_ << ':' << std::setw(2) << t.sec_;
     return out;
 }
 
@@ -67,5 +68,27 @@ bool operator<(const Time &c1, const Time &c2) {
 
 bool operator>=(const Time &c1, const Time &c2) {
     return !(c1 < c2);
+}
+
+void Time::readTime(int &begin, const char *buffer, int size) {
+    int end = read(begin, buffer, size);
+    if (end - begin != 7) {
+        throw "incorrect Time";
+    }
+    if (!isTime(buffer, begin, end)) {
+        throw "incorrect Time";
+    }
+    int hours;
+    int min;
+    int sec;
+    sscanf(buffer + begin, "%d:%d:%d", &hours, &min, &sec);
+
+    if (min > 59 || sec > 59) {
+        throw "incorrect Time";
+    }
+    hour_ = hours;
+    min_ = min;
+    sec_ = sec;
+    begin = end + 1;
 }
 

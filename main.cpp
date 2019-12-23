@@ -2,11 +2,11 @@
 #include <cstdlib>
 #include <fstream>
 #include "stdio.h"
+#include "Pair.h"
 #include "Time.h"
 #include "Album.h"
 #include "Array.h"
 #include "functions.h"
-
 
 using namespace std;
 
@@ -30,7 +30,7 @@ int main() {
         if (!in) {
             throw "expected number";
         }
-        if (n < 0 || n > 100) {
+        if ((n < 0) || (n > 100)) {
             throw "incorrect size";
         }
         Array<Album> array(n);
@@ -44,11 +44,19 @@ int main() {
         }
         sortArray(array);
         printTable(out, array);
+        out << endl;
         List<String> list;
         for (int i = 0; i < n; ++i) {
             list.addElem(array[i].getJanre());
         }
-        printTable(out, list);
+        List<Pair> list2;
+        Elem<String> * curr = list.getRoot();
+        for (int i = 0; i < list.getSize(); ++i) {
+            Pair elem(curr->getCount(), curr->getValue());
+            list2.addElem(elem);
+            curr = curr->getNext();
+        }
+        printTable2(out, list2);
     } catch (const char * e) {
         std::cerr << e;
         return 0;

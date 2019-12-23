@@ -30,24 +30,25 @@ Album::Album(const Album & second) {
 }
 
 std::ifstream &operator>>(std::ifstream & in, Album & elem) {
-    String buffer(715);
+    char buffer[715];
+    for (int i = 0; i < 715; ++i) {
+        buffer[i] = 0;
+    }
     int start = 0;
-    in >> buffer;
+    in.getline(buffer, 715, '\n');
     elem.nameOfAlbum_ = String(50);
-    start = elem.nameOfAlbum_.read();
-    in >> elem.nameOfAlbum_;
+    elem.nameOfAlbum_.readStr(start, buffer, 715);
     elem.nameOfSinger_ = String(50);
-    in >> elem.nameOfSinger_;
+    elem.nameOfSinger_.readStr(start, buffer, 715);
     elem.janre_ = String(50);
-    in >> elem.janre_;
-    in >> elem.year_;
-    in >> elem.timeOfAlbum_;
-    in >> elem.countOfSongs_;
-    in.ignore(1);
+    elem.janre_.readStr(start, buffer, 715);
+    elem.year_ = readYear(start, buffer, 715);
+    elem.timeOfAlbum_.readTime(start, buffer, 715);
+    elem.countOfSongs_ = readCount(start, buffer, 715);
     elem.songs_ = static_cast<String*>(operator new[] (elem.countOfSongs_ * sizeof(String)));
     for (int i = 0; i < elem.countOfSongs_; ++i) {
         new (elem.songs_ + i) String(50);
-        in >> *(elem.songs_ + i);
+        (elem.songs_ + i)->readStr(start, buffer, 715);
     }
     return in;
 }
@@ -84,11 +85,15 @@ countOfSongs_(second.countOfSongs_), songs_(second.songs_){
 }
 
 Album::~Album() {
-    delete &nameOfAlbum_;
-    delete &nameOfSinger_;
-    delete &janre_;
-    delete &timeOfAlbum_;
-    delete [] songs_;
+    nameOfAlbum_.~String();
+    nameOfSinger_.~String();
+    janre_.~String();
+    timeOfAlbum_.~Time();
+    for (int i = 0; i < countOfSongs_; i++)
+    {
+        songs_[i].~String();
+    }
+    operator delete[] (songs_);
 }
 
 bool operator==(const Album &c1, const Album &c2) {
@@ -135,18 +140,27 @@ String &Album::getJanre() {
     return janre_;
 }
 
-Album &Album::operator=(Album && second) {
+Album &Album::operator=(const Album & second) {
     if (&second != this) {
-        nameOfAlbum_ = std::move(second.nameOfAlbum_);
-        nameOfSinger_ = std::move(second.nameOfSinger_);
-        janre_ = std::move(second.janre_);
+        nameOfAlbum_.~String();
+        nameOfSinger_.~String();
+        janre_.~String();
+        timeOfAlbum_.~Time();
+        for (int i = 0; i < countOfSongs_; i++)
+        {
+            songs_[i].~String();
+        }
+        operator delete[] (songs_);
+        nameOfAlbum_ = second.nameOfAlbum_;
+        nameOfSinger_ = second.nameOfSinger_;
+        janre_ = second.janre_;
         year_ = second.year_;
-        timeOfAlbum_ = std::move(second.timeOfAlbum_);
+        timeOfAlbum_ = Time(second.timeOfAlbum_);
         countOfSongs_ = second.countOfSongs_;
-        songs_ = second.songs_;
-        second.year_ = 2020;
-        second.countOfSongs_ = 0;
-        second.songs_ = nullptr;
+        songs_ = static_cast<String*>(operator new[] (countOfSongs_ * sizeof(String)));
+        for (int i = 0; i < countOfSongs_; ++i) {
+            new (songs_ + i) String(second.songs_[i]);
+        }
     }
     return *this;
 }

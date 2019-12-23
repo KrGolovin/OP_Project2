@@ -4,13 +4,12 @@
 
 #ifndef OP_PROJECT2_ALBUM_H
 #define OP_PROJECT2_ALBUM_H
-
+#pragma once
 #include "String.h"
 #include "Time.h"
 
 class Album {
 public:
-
     Album();
     Album(String, String, String, int, Time, int, String *);
     Album(const Album &);
@@ -24,7 +23,7 @@ public:
     friend bool operator<= (const Album &, const Album &);
     friend bool operator>= (const Album &, const Album &);
     friend bool operator< (const Album &, const Album &);
-    Album& operator=(Album &&);
+    Album& operator=(const Album &);
     Album& operator++();
     Album& operator--();
     String& getJanre();

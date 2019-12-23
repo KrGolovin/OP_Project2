@@ -3,9 +3,9 @@
 //
 
 #include "String.h"
-#include "string.h"
 #include <iomanip>
 #include <iostream>
+#include "functions.h"
 
 String::String(int size) {
     size_ = size;
@@ -23,7 +23,9 @@ char String::operator[](const int index) {
 }
 
 String::~String() {
-    delete[] str_;
+    if (str_ != nullptr)
+        delete[] str_;
+    str_ = nullptr;
 }
 
 std::ifstream &operator>>(std::ifstream & in, String & point) {
@@ -57,14 +59,18 @@ String::String(String && second) {
     delete [] str_;
     str_ = new char[size_ + 1];
     strcpy(str_, second.str_);
-    second.str_ = strdup("Nan");
+    delete [] second.str_;
+    second.str_ = new char[4];
+    //second.str_ = strdup("Nan");
     second.size_ = 3;
 }
 
 String &String::operator=(const String & second) {
     if (&second != this) {
         size_ = second.size_;
-        delete[] str_;
+        if (str_ != nullptr) {
+            delete[] str_;
+        }
         str_ = new char[size_ + 1];
         strcpy(str_, second.str_);
 //    second.str_ = strdup("Nan");
@@ -96,22 +102,42 @@ bool operator<(const String & s1, const String & s2) {
 String &String::operator=(String && second) {
     if (&second != this) {
         size_ = second.size_;
-        delete[] str_;
+        if (str_ != nullptr) {
+            delete[] str_;
+        }
         str_ = new char[size_ + 1];
         strcpy(str_, second.str_);
-        second.str_ = strdup("Nan");
+        delete[] second.str_;
+        second.str_ = new char[4];
+        //second.str_ = strdup("Nan");
         second.size_ = 3;
     }
     return *this;
 }
 
-const char *String::getStr() {
-    return str_;
+String &String::getValue() {
+    return *this;
 }
 
-int String::read(int start, String &) {
-
+void String::readStr(int &begin, const char *buffer, int size) {
+    int end = read(begin, buffer, size);
+    if (((end - begin) < 1) || ((end - begin) > 50)) {
+        throw "incorrect size of data";
+    }
+    if (!isName(buffer, begin, end)) {
+        throw "bad name";
+    }
+    size_ = end - begin;
+    if (str_ != nullptr) {
+        delete[] str_;
+    }
+    str_ = new char[size_ + 1];
+    strncpy(str_, buffer + begin, size_);
+    str_[size_] = 0;
+    begin = end + 1;
 }
+
+
 
 
 

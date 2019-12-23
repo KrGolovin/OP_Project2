@@ -4,7 +4,7 @@
 
 #ifndef OP_PROJECT2_STRING_H
 #define OP_PROJECT2_STRING_H
-
+#pragma once
 #include <iostream>
 #include <fstream>
 
@@ -17,14 +17,15 @@ public:
     String(int);
     String(const String &);
     String(String &&);
-    const char* getStr();
+    String & getValue();
     String& operator=(const String &);
     String& operator=(String &&);
     friend bool operator== (const String &, const String &);
     friend bool operator> (const String &, const String &);
     friend bool operator< (const String &, const String &);
     ~String();
-    int read(int start, String &);
+    void readStr(int &, const char* , int);
+
 private:
     int size_;
     char* str_;

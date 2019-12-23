@@ -4,7 +4,7 @@
 
 #ifndef OP_PROJECT2_ARRAY_H
 #define OP_PROJECT2_ARRAY_H
-
+#pragma once
 template <typename T>
 class Array {
 public:

@@ -4,7 +4,7 @@
 
 #ifndef OP_PROJECT2_TIME_H
 #define OP_PROJECT2_TIME_H
-
+#pragma once
 #include <fstream>
 class Time{
 public:
@@ -20,6 +20,7 @@ public:
     friend bool operator<= (const Time &c1, const Time &c2);
     friend bool operator< (const Time &c1, const Time &c2);
     friend bool operator>= (const Time &c1, const Time &c2);
+    void readTime(int &, const char* , int);
 private:
     int hour_;
     int min_;
